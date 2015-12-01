@@ -7,6 +7,8 @@
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/tracking/build/tracking-min.js"></script>
 	<script src="bower_components/wad/build/wad.min.js"></script>
+	<!-- <script src="js/flocking-all.min.js"></script> -->
+	<!-- <script src="js/theremin.js"></script> -->
   <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 
   <style>
@@ -33,7 +35,9 @@
 	<button id="stop-sound" onclick="stopSound();">Stop sound</button>
 
   <script>
-		var music = new Wad({source : 'sine', pitch : 120, loop : true})
+		var music = new Wad({source : 'sine', pitch : 120});
+
+		var stopped = true;
     window.onload = function() {
       var video = document.getElementById('video');
       var canvas = document.getElementById('canvas');
@@ -46,13 +50,13 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         event.data.forEach(function(rect) {
-					music.stop();
+					// music.stop();
           if (rect.color === 'custom') {
             rect.color = tracker.customColor;
           }
 
 					var vol = rect.y / 450;
-					music.setVolume(vol);
+					setVolume(vol);
 
           context.strokeStyle = rect.color;
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
@@ -60,19 +64,44 @@
           context.fillStyle = "#fff";
           context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
           context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-					music.play();
+					// music.play();
         });
       });
 
      // initGUIControllers(tracker);
     };
 
+		// function playSound() {
+		// 	theremin.play();
+		// }
+
+		function setVolume(vol) {
+			// if (!stopped) {
+			// 	music.stop();
+			// 	stopped = true;
+			// 	setTimeout(function(){
+			// 		music.setVolume(vol);
+			// 		music.play();
+			// 		stopped = false;
+			// 	}, 50);
+			// }
+			music.stop();
+			music.setVolume(vol);
+			music.play();
+		}
+
 		function playSound() {
-			music.play()
+			// if (stopped) {
+				music.play()
+			// }
+			stopped = false;
 		}
 
 		function stopSound() {
-			music.stop()
+			// if (!stopped) {
+				music.stop()
+			// }
+			stopped = true;
 		}
 
   </script>
