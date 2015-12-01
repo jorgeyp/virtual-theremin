@@ -6,7 +6,7 @@
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/tracking/build/tracking-min.js"></script>
-  <script src="js/timbre.js"></script>
+	<script src="bower_components/wad/build/wad.min.js"></script>
   <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 
   <style>
@@ -30,8 +30,10 @@
   </div>
 
   <button id="play-sound" onclick="playSound();">Play sound</button>
+	<button id="stop-sound" onclick="stopSound();">Stop sound</button>
 
   <script>
+		var saw = new Wad({source : 'sawtooth', volume : .9})
     window.onload = function() {
       var video = document.getElementById('video');
       var canvas = document.getElementById('canvas');
@@ -61,21 +63,15 @@
      // initGUIControllers(tracker);
     };
 
-    var soundWorker = new Worker('js/timbre.js');
-    
-    function playSound() {
-    	soundWorker.onmessage = function(e) {
-			  var command = e.data;
-			
-			  if (command == 'play') {
-			  	console.log('playing');
-			  	T("sin", {freq:880, mul:0.5}).play();
-			  }
-			}
-			soundWorker.postMessage('play');
-    }
+		function playSound() {
+			saw.play()
+		}
+
+		function stopSound() {
+			saw.stop()
+		}
+
   </script>
 
 </body>
 </html>
-
