@@ -50,6 +50,7 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         event.data.forEach(function(rect) {
+          music.play();
 					// music.stop();
           if (rect.color === 'custom') {
             rect.color = tracker.customColor;
@@ -58,7 +59,7 @@
 					var vol = rect.y / 450;
                 // music.stop();
       // music.setVolume(vol);
-      // music.play();
+      
 					setVolume(vol);
 
           context.strokeStyle = rect.color;
