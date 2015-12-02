@@ -45,7 +45,7 @@
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
-    oscillator.type = 'sine';
+    oscillator.type = 'triangle';
     oscillator.frequency.value = minFreq; 
     oscillator.start();
 
@@ -63,28 +63,36 @@
       tracker.on('track', function(event) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        event.data.forEach(function(rect) { // Eventos de detección
-          var vol = reverse(rect.y / 450, maxVol, 0); // Volumen actual
-          var freq = reverse(rect.y / 450 * maxFreq, maxFreq, minFreq); // Frecuencia actual 
+        if (event.data.length === 0) {
+            // No targets were detected in this frame.
+            stop();
+        } else {
+          // Plots the detected targets here.
+          start();
 
-          if (rect.color === 'cyan') {
-            console.log(vol);
-            setVolume(vol);
-          }
+          event.data.forEach(function(rect) { // Eventos de detección
+            var vol = reverse(rect.y / 450, maxVol, 0); // Volumen actual
+            var freq = reverse(rect.y / 450 * maxFreq, maxFreq, minFreq); // Frecuencia actual 
 
-          if (rect.color === 'yellow') {
-            console.log(freq);
-            setFrequency(freq);
-          }
+            if (rect.color === 'cyan') {
+              console.log(vol);
+              setVolume(vol);
+            }
 
-          // Rectángulo alrededor de la detección
-          context.strokeStyle = rect.color;
-          context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-          // Mostrar coordenadas
-          // context.fillStyle = "#fff";
-          // context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
-          // context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-        });
+            if (rect.color === 'yellow') {
+              console.log(freq);
+              setFrequency(freq);
+            }
+
+            // Rectángulo alrededor de la detección
+            context.strokeStyle = rect.color;
+            context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+            // Mostrar coordenadas
+            // context.fillStyle = "#fff";
+            // context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+            // context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+          });
+        }
       });
     };
 
