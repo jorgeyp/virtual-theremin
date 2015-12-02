@@ -1,138 +1,53 @@
-	<!doctype html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>tracking.js - color with camera</title>
-
-  <script src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script src="bower_components/tracking/build/tracking-min.js"></script>
-  <script src="js/MIDIUtils.js"></script>
-  <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
-
-  <style>
-  video, canvas {
-    margin-left: 100px;
-    margin-top: 35px;
-    position: absolute;
-    transform: rotateY(180deg);
-  }
-  </style>
-</head>
-<body>
-  <div class="demo-title">
-    <p><a href="http://trackingjs.com" target="_parent">tracking.js</a> － choose the colors you want to detect through the controls on the right</p>
-  </div>
-
-  <div class="demo-frame">
-    <div class="demo-container">
-      <video id="video" width="600" height="450" preload autoplay loop muted controls></video>
-      <canvas id="canvas" width="600" height="450"></canvas>
+  <head>
+    <meta charset="utf-8">
+    <title>Virtual Theremin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="container" class="container">
+  	  <header id="header" class="header">
+  		  <h1 id="title" class="title"> Virtual Theremin </h1>
+  	  </header>
+  	  <div id="content" class="content">
+  		  <div class="row sounds-centered">
+          <div class="col-md-offset-1 col-lg-2 col-md-2 col-xs-12">
+            <input type="submit" id="sine" class="btn btn-sound" data-sound="sine" value="Sine"/>
+          </div>
+          <div class="col-lg-2 col-md-2 col-xs-12">
+              <input type="submit" id="square" class="btn btn-sound" data-sound="square" value="Square"/>
+          </div>
+          <div class="col-lg-2 col-md-2 col-xs-12">
+              <input type="submit" id="sawtooth" class="btn btn-sound" data-sound="sawtooth" value="Sawtooth"/>
+          </div>
+          <div class="col-lg-2 col-md-2 col-xs-12">
+              <input type="submit" id="triangle" class="btn btn-sound" data-sound="triangle" value="Triangle"/>
+          </div>
+          <div class="col-lg-2 col-md-2 col-xs-12">
+              <input type="submit" id="custom" class="btn btn-sound" data-sound="custom" value="Custom"/>
+          </div>
+		    </div>
+  	  </div>
+  	  <footer id="footer" class="footer">
+  		  <p id="copyright" class="copyright"> © Amaia Eskisabel, Jorge Yagüe </p>
+  	  </footer>
     </div>
-  </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-  <button id="play-sound" onclick="start();">Play sound</button>
-	<button id="stop-sound" onclick="stop();">Stop sound</button>
-  <h2 id="note"></h2>
-  <h2 id="volume"></h2>
+    <script>
 
-  <script>
-    // Frecuencia del sonido
-    var maxFreq = 3000;
-    var minFreq = 65;
-    var maxVol = 1;
-
-    // Web Audio API
-    var audioCtx = new AudioContext();
-    var oscillator = audioCtx.createOscillator();
-    var gainNode = audioCtx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    oscillator.type = 'square'; // sine, square, sawtooth, triangle, custom
-    oscillator.frequency.value = minFreq; 
-    oscillator.start();
-
-    setVolume(0);
-
-		var stopped = true;
-    window.onload = function() {
-      var video = document.getElementById('video');
-      var canvas = document.getElementById('canvas');
-      var context = canvas.getContext('2d');
-      // // translate context to center of canvas
-      // context.translate(canvas.width / 2, canvas.height / 2);
-      // // flip context horizontally
-      // context.scale(-1, 1);
-
-			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
-
-      tracking.track('#video', tracker, { camera: true });
-
-      tracker.on('track', function(event) {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (event.data.length === 0) {
-            // No targets were detected in this frame.
-            stop();
-        } else {
-          // Plots the detected targets here.
-          start();
-
-          event.data.forEach(function(rect) { // Eventos de detección
-            var vol = reverse(rect.y / 450, maxVol, 0); // Volumen actual
-            var freq = reverse(rect.y / 450 * maxFreq, maxFreq, minFreq); // Frecuencia actual 
-
-            if (rect.color === 'cyan') {
-              console.log(vol);
-              setVolume(vol);
-            }
-
-            if (rect.color === 'yellow') {
-              console.log(freq);
-              setFrequency(freq);
-            }
-
-            // Rectángulo alrededor de la detección
-            context.strokeStyle = rect.color;
-            context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-            // Mostrar coordenadas
-            // context.fillStyle = "#fff";
-            // context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
-            // context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-          });
-        }
+      $('input').click(function(){
+          var sound;
+          if($(this).data('sound') != null) {
+           sound= $(this).data('sound');
+          } else {
+            sound = 'sine';
+          }
+          window.location.href = "theremin.html?sound="+sound;
       });
-    };
-
-    function frequencyToNote(freq) {
-      return MIDIUtils.noteNumberToName(MIDIUtils.frequencyToNoteNumber(freq));
-    }
-
-    // Invertir valores, por las coordenadas
-    function reverse(v, max, min) {
-      return (max + min) - v;
-    }
-
-		function setVolume(vol) {
-      gainNode.gain.value = vol;
-      $('#volume').text(Number(vol*100).toFixed() + "%");
-		}
-
-    function setFrequency(freq) {
-      oscillator.frequency.value = freq;
-      $('#note').text(frequencyToNote(freq));
-    }
-
-		function start() {
-			setVolume(0.1);
-		}
-
-    function stop() {
-      setVolume(0);
-    }
-
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>
