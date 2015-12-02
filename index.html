@@ -6,9 +6,6 @@
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/tracking/build/tracking-min.js"></script>
-	<!--script src="bower_components/wad/build/wad.min.js"></script-->
-	<!-- <script src="js/flocking-all.min.js"></script> -->
-	<!-- <script src="js/theremin.js"></script> -->
   <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 
   <style>
@@ -35,7 +32,9 @@
 	<button id="stop-sound" onclick="stopSound();">Stop sound</button>
 
   <script>
-		// var music = new Wad({source : 'sine', pitch : 440});
+    var maxFreq = 3000;
+    var maxVol = 1;
+
     var audioCtx = new AudioContext();
     var oscillator = audioCtx.createOscillator();
     var gainNode = audioCtx.createGain();
@@ -62,18 +61,28 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         event.data.forEach(function(rect) {
-          
+          var vol = rect.y / 450;
+          var freq = rect.y / 450 * maxFreq; 
+
           // music.play();
 					// music.stop();
           if (rect.color === 'custom') {
             rect.color = tracker.customColor;
           }
 
-					var vol = rect.y / 450;
+          if (rect.color === 'magenta') {
+            setVolume(vol);
+          }
+
+          if (rect.color === 'yellow') {
+            setFrequency(freq);
+          }
+
+					
                 // music.stop();
       // music.setVolume(vol);
       
-					setVolume(vol);
+					// setVolume(vol);
 
           context.strokeStyle = rect.color;
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
@@ -108,6 +117,10 @@
 			// music.setVolume(vol);
 			// music.play();
 		}
+
+    function setFrequency(freq) {
+      oscillator.frequency.value = freq;
+    }
 
 		// function playSound() {
 		// 	// if (stopped) {
