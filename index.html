@@ -34,7 +34,7 @@
   <script>
     // Frecuencia del sonido
     var maxFreq = 3000;
-    var minFreq = 120;
+    var minFreq = 65;
     var maxVol = 1;
 
     // Web Audio API
@@ -45,7 +45,7 @@
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
 
-    oscillator.type = 'triangle';
+    oscillator.type = 'square'; // sine, square, sawtooth, triangle, custom
     oscillator.frequency.value = minFreq; 
     oscillator.start();
 
