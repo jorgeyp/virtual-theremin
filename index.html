@@ -33,6 +33,7 @@
 
   <script>
     var maxFreq = 3000;
+    var minFreq = 120;
     var maxVol = 1;
 
     var audioCtx = new AudioContext();
@@ -61,18 +62,20 @@
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         event.data.forEach(function(rect) {
-          var vol = rect.y / 450;
-          var freq = rect.y / 450 * maxFreq; 
+          var vol = reverse(rect.y / 450, maxVol, 0);
+          var freq = reverse(rect.y / 450 * maxFreq, maxFreq, minFreq); 
 
           if (rect.color === 'custom') {
             rect.color = tracker.customColor;
           }
 
           if (rect.color === 'cyan') {
+            console.log(vol);
             setVolume(vol);
           }
 
           if (rect.color === 'yellow') {
+            console.log(freq);
             setFrequency(freq);
           }
 
@@ -87,6 +90,10 @@
 
      // initGUIControllers(tracker);
     };
+
+    function reverse(v, max, min) {
+      return (max + min) - v;
+    }
 
 		// function playSound() {
 		// 	theremin.play();
