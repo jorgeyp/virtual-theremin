@@ -13,6 +13,7 @@
     margin-left: 100px;
     margin-top: 35px;
     position: absolute;
+    transform: rotateY(180deg);
   }
   </style>
 </head>
@@ -56,6 +57,11 @@
       var video = document.getElementById('video');
       var canvas = document.getElementById('canvas');
       var context = canvas.getContext('2d');
+      // // translate context to center of canvas
+      // context.translate(canvas.width / 2, canvas.height / 2);
+      // // flip context horizontally
+      // context.scale(-1, 1);
+
 			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
 
       tracking.track('#video', tracker, { camera: true });
