@@ -6,6 +6,7 @@
 
   <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="bower_components/tracking/build/tracking-min.js"></script>
+  <script src="js/MIDIUtils.js"></script>
   <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 
   <style>
@@ -31,6 +32,7 @@
 
   <button id="play-sound" onclick="start();">Play sound</button>
 	<button id="stop-sound" onclick="stop();">Stop sound</button>
+  <h2 id="note"></h2>
 
   <script>
     // Frecuencia del sonido
@@ -102,6 +104,10 @@
       });
     };
 
+    function frequencyToNote(freq) {
+      return MIDIUtils.noteNumberToName(MIDIUtils.frequencyToNoteNumber(freq));
+    }
+
     // Invertir valores, por las coordenadas
     function reverse(v, max, min) {
       return (max + min) - v;
@@ -114,6 +120,7 @@
 
     function setFrequency(freq) {
       oscillator.frequency.value = freq;
+      $('#note').text(frequencyToNote(freq));
     }
 
 		function start() {
