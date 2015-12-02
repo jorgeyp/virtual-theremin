@@ -35,7 +35,7 @@
 	<button id="stop-sound" onclick="stopSound();">Stop sound</button>
 
   <script>
-		var music = new Wad({source : 'sine', pitch : 120});
+		var music = new Wad({source : 'sine', pitch : 440});
 
 		var stopped = true;
     window.onload = function() {
@@ -56,6 +56,9 @@
           }
 
 					var vol = rect.y / 450;
+                // music.stop();
+      // music.setVolume(vol);
+      // music.play();
 					setVolume(vol);
 
           context.strokeStyle = rect.color;
@@ -76,6 +79,7 @@
 		// }
 
 		function setVolume(vol) {
+      // console.log(vol)
 			// if (!stopped) {
 			// 	music.stop();
 			// 	stopped = true;
