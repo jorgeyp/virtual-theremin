@@ -28,8 +28,8 @@
     </div>
   </div>
 
-  <button id="play-sound" onclick="playSound();">Play sound</button>
-	<button id="stop-sound" onclick="stopSound();">Stop sound</button>
+  <button id="play-sound" onclick="start();">Play sound</button>
+	<button id="stop-sound" onclick="stop();">Stop sound</button>
 
   <script>
     var maxFreq = 3000;
@@ -46,14 +46,14 @@
     oscillator.frequency.value = 440; 
     oscillator.start();
 
-    gainNode.gain.value = 0.1;
+    setVolume(0);
 
 		var stopped = true;
     window.onload = function() {
       var video = document.getElementById('video');
       var canvas = document.getElementById('canvas');
       var context = canvas.getContext('2d');
-			var tracker = new tracking.ColorTracker(['magenta', 'yellow']);
+			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
 
       tracking.track('#video', tracker, { camera: true });
 
@@ -64,8 +64,6 @@
           var vol = rect.y / 450;
           var freq = rect.y / 450 * maxFreq; 
 
-          // music.play();
-					// music.stop();
           if (rect.color === 'custom') {
             rect.color = tracker.customColor;
           }
@@ -78,19 +76,12 @@
             setFrequency(freq);
           }
 
-					
-                // music.stop();
-      // music.setVolume(vol);
-      
-					// setVolume(vol);
-
           context.strokeStyle = rect.color;
           context.strokeRect(rect.x, rect.y, rect.width, rect.height);
           context.font = '11px Helvetica';
           context.fillStyle = "#fff";
           context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
           context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-					// music.play();
         });
       });
 
@@ -103,31 +94,20 @@
 
 		function setVolume(vol) {
       gainNode.gain.value = vol;
-      // console.log(vol)
-			// if (!stopped) {
-			// 	music.stop();
-			// 	stopped = true;
-			// 	setTimeout(function(){
-			// 		music.setVolume(vol);
-			// 		music.play();
-			// 		stopped = false;
-			// 	}, 50);
-			// }
-			// music.stop();
-			// music.setVolume(vol);
-			// music.play();
+
 		}
 
     function setFrequency(freq) {
       oscillator.frequency.value = freq;
     }
 
-		// function playSound() {
-		// 	// if (stopped) {
-		// 		music.play()
-		// 	// }
-		// 	stopped = false;
-		// }
+		function start() {
+			setVolume(0.1);
+		}
+
+    function stop() {
+      setVolume(0);
+    }
 
 		// function stopSound() {
 		// 	// if (!stopped) {
