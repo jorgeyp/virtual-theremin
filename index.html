@@ -33,6 +33,7 @@
   <button id="play-sound" onclick="start();">Play sound</button>
 	<button id="stop-sound" onclick="stop();">Stop sound</button>
   <h2 id="note"></h2>
+  <h2 id="volume"></h2>
 
   <script>
     // Frecuencia del sonido
@@ -115,7 +116,7 @@
 
 		function setVolume(vol) {
       gainNode.gain.value = vol;
-
+      $('#volume').text(Number(vol*100).toFixed() + "%");
 		}
 
     function setFrequency(freq) {
