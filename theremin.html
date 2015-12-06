@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Virtual Theremin</title>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/tracking/build/tracking-min.js"></script>
+	<script src="js/MIDIUtils.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+  </head>
+  <body>
+    <div id="container" class="container">
+  	  <header id="header" class="header">
+  		<h1 id="title" class="title"> Virtual Theremin </h1>
+  	  </header>
+  	  <div id="content" class="content">
+        <h2 id="note" class="note"></h2>
+        <h2 id="volume" class="volume"></h2>
+        <div id="camera" class="camera">
+          <video id="video" class="video" preload autoplay loop muted></video>
+          <canvas id="canvas" class="canvas"></canvas>
+        </div>
+      <div class="row sounds">
+        <div class="col-md-offset-1 col-lg-2 col-md-2 col-xs-12">
+          <input type="submit" id="sine" class="btn btn-sound" value="sine"/>
+        </div>
+        <div class="col-lg-2 col-md-2 col-xs-12">
+            <input type="submit" id="square" class="btn btn-sound" value="square"/>
+        </div>
+        <div class="col-lg-2 col-md-2 col-xs-12">
+            <input type="submit" id="sawtooth" class="btn btn-sound" value="sawtooth"/>
+        </div>
+         <div class="col-lg-2 col-md-2 col-xs-12">
+            <input type="submit" id="triangle" class="btn btn-sound" value="triangle"/>
+        </div>
+                  <div class="col-lg-2 col-md-2 col-xs-12">
+            <input type="submit" id="custom" class="btn btn-sound" value="custom"/>
+        </div>
+      </div>
+  	  </div>
+  	  <!-- <footer id="footer-theremin" class="footer">
+  		  <p id="copyright" class="copyright"> © Amaia Eskisabel, Jorge Yagüe </p>
+  	  </footer> -->
+    </div>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script>
+      var maxFreq = 3000;
+      var minFreq = 65;
+      var maxVol = 1;
+
+      var audioCtx = new AudioContext();
+      var oscillator = audioCtx.createOscillator();
+      var gainNode = audioCtx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.type = getQueryVariable('sound');
+      oscillator.frequency.value = minFreq;
+      oscillator.start();
+
+      setVolume(0);
+
+      var stopped = true;
+      window.onload = function() {
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+
+        // canvas.width  = window.innerWidth;
+        // canvas.height = window.innerHeight;
+        // video.width  = window.innerWidth;
+        // video.height = window.innerHeight;
+
+        // // resize the canvas to fill browser window dynamically
+        // window.addEventListener('resize', resizeCanvas, false);
+        //
+        // function resizeCanvas() {
+        //         canvas.width = window.innerWidth;
+        //         canvas.height = window.innerHeight;
+        //
+        //
+        // }
+        // resizeCanvas();
+
+        var context = canvas.getContext('2d');
+        // // translate context to center of canvas
+        // context.translate(canvas.width / 2, canvas.height / 2);
+        // // flip context horizontally
+        // context.scale(-1, 1);
+
+      var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
+
+        tracking.track('#video', tracker, { camera: true });
+
+        tracker.on('track', function(event) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (event.data.length === 0) {
+              // No targets were detected in this frame.
+              stop();
+          } else {
+            // Plots the detected targets here.
+            start();
+
+            event.data.forEach(function(rect) { // Eventos de detección
+              var vol = reverse(rect.y / canvas.height, maxVol, 0); // Volumen actual
+              var freq = reverse(rect.y / canvas.height * maxFreq, maxFreq, minFreq); // Frecuencia actual
+
+              if (rect.color === 'cyan') {
+                setVolume(vol);
+              }
+
+              if (rect.color === 'yellow') {
+                setFrequency(freq);
+              }
+
+              // Rectángulo alrededor de la detección
+              context.strokeStyle = rect.color;
+              context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+              // Mostrar coordenadas
+              // context.fillStyle = "#fff";
+              // context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
+              // context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
+            });
+          }
+        });
+      };
+
+      function frequencyToNote(freq) {
+        return MIDIUtils.noteNumberToName(MIDIUtils.frequencyToNoteNumber(freq));
+      }
+
+      // Invertir valores, por las coordenadas
+      function reverse(v, max, min) {
+        return (max + min) - v;
+      }
+
+      function setVolume(vol) {
+        gainNode.gain.value = vol;
+        $('#volume').text(Number(vol*100).toFixed() + "%");
+      }
+
+      function setFrequency(freq) {
+        oscillator.frequency.value = freq;
+        $('#note').text(frequencyToNote(freq));
+      }
+
+      function start() {
+        setVolume(0.1);
+      }
+
+      function stop() {
+        setVolume(0);
+      }
+
+      function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+          var pair = vars[i].split("=");
+          if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+      }
+    </script>
+  </body>
+</html>
