@@ -1,0 +1,33 @@
+html, body {
+  background: #2e8ece;
+}
+
+video, canvas {
+  transform: rotateY(180deg);
+  position: absolute;
+  z-index: 0;
+}
+
+.container {
+  width: 1024px;
+}
+
+#note, #volume {
+  z-index: 3;
+  color: white;
+}
+
+
+#sounds, #title {
+  position: relative;
+  z-index: 3;
+}
+
+.btn-sound, .btn-record {
+    display: block;
+    width: 100%;
+    height: 70px;
+    border: 4px solid #fff;
+    box-shadow: 0 7px 0 0 #007299;
+    background: #2e8ece;
+}
