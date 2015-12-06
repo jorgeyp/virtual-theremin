@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>tracking.js - color with camera</title>
+	<title>Virtual Theremin</title>
 
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="bower_components/tracking/build/tracking-min.js"></script>
@@ -18,9 +18,7 @@
 	<!-- <div class="demo-title">
     <p><a href="http://trackingjs.com" target="_parent">tracking.js</a> － choose the colors you want to detect through the controls on the right</p>
   </div> -->
-
 	<div id="container" class="container">
-
 		<div class="content">
 			<header id="header" class="header">
 				<h1 id="title" class="title"> Virtual Theremin </h1>
@@ -41,15 +39,31 @@
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<h2 id="note" class="pull-right"></h2>
+			<div class="row indicators">
+				<div class="col-md-1">
+					<img id="volume-png" src="img/volume.png" alt="Volume icon"/>
+				</div>
+				<div class="col-md-5">
 					<h2 id="volume"></h2>
 				</div>
+				<div class="col-md-5">
+					<h2 id="note" class="pull-right"></h2>
+				</div>
+				<div class="col-md-1">
+					<img id="pitch-png" src="img/pitch.png" alt="Pitch icon"/>
+				</div>
 			</div>
-			<div class="row">
+			<div class="row hands">
+				<div class="col-md-6">
+					<img id="left-png" src="img/left.png" alt="Left hand"/>
+				</div>
+				<div class="col-md-6">
+					<img id="right-png" src="img/right.png" alt="Right hand"/>
+				</div>
+			</div>
+			<div class="row record-container">
 				<div class="col-lg-2 col-md-2 col-xs-3">
-					<input type="submit" id="record" class="btn btn-sound pull-left" data-sound="record" value="Record" onclick="record();" />
+					<input type="submit" id="record" class="btn btn-sound pull-left btn-record" data-sound="record" value="" onclick="record();" />
 				</div>
 			</div>
 			<div class="row">
@@ -61,26 +75,10 @@
 				</div>
 			</div>
 		</div>
-
-
-
-		<div id="content" class="content">
-			<div class="demo-frame">
-				<div class="demo-container">
-
-
-
-					<div class="row">
-
-						<div class="col-md-12">
-
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+		<footer id="footer">
+			<p>© Amaia Eskisabel, Jorge Yague </p>
+		</footer>
 	</div>
-
 	<!-- <button id="play-sound" onclick="start();">Play sound</button>
 	<button id="stop-sound" onclick="stop();">Stop sound</button>
   <h2 id="note"></h2>

@@ -1,6 +1,7 @@
 
 html, body {
   background: #2e8ece;
+  color: white;
 }
 
 video, canvas {
@@ -13,15 +14,20 @@ video, canvas {
   width: 1024px;
 }
 
-#note, #volume {
-  z-index: 3;
-  color: white;
+#title {
+  position: relative;
+  text-align: center;
+  padding-bottom: 1%;
 }
 
-
 #sounds, #title {
-  position: relative;
   z-index: 3;
+}
+
+#sounds {
+  position: absolute;
+  margin-top: 1%;
+  width: 1024px;
 }
 
 .btn-sound, .btn-record {
@@ -31,4 +37,54 @@ video, canvas {
     border: 4px solid #fff;
     box-shadow: 0 7px 0 0 #007299;
     background: #2e8ece;
+}
+
+.indicators {
+  position: absolute;
+  margin-top: 6%;
+  width: 1024px;
+  z-index: 3;
+}
+
+#note, #volume {
+  display: inline-block;
+}
+
+#volume-png {
+  padding-left: 60%;
+}
+#volume {
+  left: 0;
+  float: left;
+  padding-left: 8%;
+}
+
+#note {
+  float: right;
+  right: 0;
+}
+
+.hands {
+  position: absolute;
+  margin-top: 15%;
+  width: 1024px;
+  z-index: 3;
+  text-align: center;
+}
+
+.record-container {
+  position: absolute;
+  bottom: 13%;
+  width: 1024px;
+  z-index: 3;
+}
+
+.btn-record, .btn-record:hover, .btn-record:focus, .btn-record:active {
+  background:url(../img/rec.png) #2e8ece no-repeat center;
+}
+
+#footer {
+  position: absolute;
+  bottom: 2%;
+  padding-left: 21%;
 }
