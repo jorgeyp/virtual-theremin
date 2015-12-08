@@ -109,6 +109,8 @@
 			var video = document.getElementById('video');
 			var canvas = document.getElementById('canvas');
 			var context = canvas.getContext('2d');
+			var isTouching = false;
+			var touchTimeout;
 
 			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
 
@@ -165,10 +167,22 @@
 					var canvasXe = canvasXo + $('#' + button).width();
 					var canvasYe = canvasYo + $('#' + button).height();
 
-					if (realX > canvasXo && realX < canvasXe) {
-						if (realY > canvasYo && realY < canvasYe) {
+					// console.log('istouching ' + isTouching)
+
+					if (realX > canvasXo && realX < canvasXe && realY > canvasYo && realY < canvasYe) {
+						$('#' + button).css('background', 'red');
+						if (!isTouching) {
+							console.log('touching')
+							isTouching = true;
+							touchTimeout = setTimeout(function() {
 								setSound(button);
+							}, 2000);
 						}
+					} else {
+						console.log('not touching')
+						isTouching = false;
+						clearTimeout(touchTimeout);
+						$('#' + button).css('background', '#2e8ece');
 					}
 				}
 
@@ -204,6 +218,7 @@
 
 		function setSound(waveForm) {
 			oscillator.type = waveForm;
+			console.log('set sound');
 		}
 	</script>
 
