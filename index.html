@@ -130,14 +130,18 @@
 						var vol = reverse(rect.y / canvas.height, maxVol, 0); // Volumen actual
 						var freq = reverse(rect.y / canvas.height * maxFreq, maxFreq, minFreq); // Frecuencia actual
 
+						checkTouching('sine', rect);
+						checkTouching('square', rect);
+						checkTouching('sawtooth', rect);
+						checkTouching('triangle', rect);
+						// checkTouching('record', rect);
+
 						if (rect.color === 'cyan') {
-							// console.log(vol);
 							$('#left-png').hide('slow');
 							setVolume(vol);
 						}
 
 						if (rect.color === 'yellow') {
-							// console.log(freq);
 							$('#right-png').hide('slow');
 							setFrequency(freq);
 						}
@@ -145,12 +149,29 @@
 						// Rectángulo alrededor de la detección
 						context.strokeStyle = rect.color;
 						context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-						// Mostrar coordenadas
-						// context.fillStyle = "#fff";
-						// context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
-						// context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
 					});
 				}
+
+				function checkTouching(button, rect) {
+					var realX = reverse(
+						rect.x + $('#canvas').offset().left,
+						$('#canvas').width(),
+						$('#canvas').offset().left
+					) + $('#canvas').offset().left;
+					var realY = rect.y + $('#canvas').offset().top;
+
+					var canvasXo = $('#' + button).offset().left;
+					var canvasYo = $('#' + button).offset().top;
+					var canvasXe = canvasXo + $('#' + button).width();
+					var canvasYe = canvasYo + $('#' + button).height();
+
+					if (realX > canvasXo && realX < canvasXe) {
+						if (realY > canvasYo && realY < canvasYe) {
+								setSound(button);
+						}
+					}
+				}
+
 			});
 		};
 
