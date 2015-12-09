@@ -174,14 +174,14 @@
 						if (!isTouching) {
 							console.log('touching')
 							isTouching = true;
-							touchTimeout = setTimeout(function() {
+							// touchTimeout = setTimeout(function() {
 								setSound(button);
-							}, 2000);
+							// }, 2000);
 						}
 					} else {
 						console.log('not touching')
 						isTouching = false;
-						clearTimeout(touchTimeout);
+						// clearTimeout(touchTimeout);
 						$('#' + button).css('background', '#2e8ece');
 					}
 				}
@@ -218,7 +218,7 @@
 
 		function setSound(waveForm) {
 			oscillator.type = waveForm;
-			console.log('set sound');
+			console.log('set sound' + waveForm);
 		}
 	</script>
 
