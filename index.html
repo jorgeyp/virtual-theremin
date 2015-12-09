@@ -8,7 +8,6 @@
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="bower_components/tracking/build/tracking-min.js"></script>
 	<script src="js/MIDIUtils.js"></script>
-	<script src="js/recorder.js"></script>
 	<link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
@@ -27,16 +26,16 @@
 			<div id="sounds" class="sounds">
 				<div class="row">
 					<div class="col-md-3">
-						<input type="submit" id="sine" class="btn btn-sound" data-sound="sine" value="Sine" onclick="setSound('sine');" />
+						<input type="submit" id="sine" class="btn btn-sound" data-sound="sine" value="Sonido senoidal" onclick="setSound('sine');" />
 					</div>
 					<div class="col-md-3">
-						<input type="submit" id="square" class="btn btn-sound" data-sound="square" value="Square" onclick="setSound('square');" />
+						<input type="submit" id="square" class="btn btn-sound" data-sound="square" value="Sonido cuadrado" onclick="setSound('square');" />
 					</div>
 					<div class="col-md-3">
-						<input type="submit" id="sawtooth" class="btn btn-sound" data-sound="sawtooth" value="Sawtooth" onclick="setSound('sawtooth');" />
+						<input type="submit" id="sawtooth" class="btn btn-sound" data-sound="sawtooth" value="Sonido sierra" onclick="setSound('sawtooth');" />
 					</div>
 					<div class="col-md-3">
-						<input type="submit" id="triangle" class="btn btn-sound" data-sound="triangle" value="Triangle" onclick="setSound('triangle');" />
+						<input type="submit" id="triangle" class="btn btn-sound" data-sound="triangle" value="Sonido triangular" onclick="setSound('triangle');" />
 					</div>
 				</div>
 			</div>
@@ -77,7 +76,7 @@
 			</div>
 		</div>
 		<footer id="footer">
-			<p>© Amaia Eskisabel, Jorge Yague </p>
+			<p>© Amaia Eskisabel, Jorge Yagüe </p>
 			<!-- <h2>Recordings</h2>
   		<ul id="recordingslist"></ul> -->
 		</footer>
@@ -107,6 +106,15 @@
 
 		setVolume(0);
 
+     var chunks = [];
+
+
+     var dest = audioCtx.createMediaStreamDestination();
+     var mediaRecorder = new MediaRecorder(dest.stream);
+     oscillator.connect(dest);
+
+
+
 		var stopped = true;
 		window.onload = function() {
 			var video = document.getElementById('video');
@@ -114,8 +122,6 @@
 			var context = canvas.getContext('2d');
 			var isTouching = false;
 			var touchTimeout;
-
-			initialiseRecorder();
 
 			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
 
@@ -229,14 +235,6 @@
 		// Recorder
 		var isRecording = false;
 
-		function initialiseRecorder() {
-			// var input = audioCtx.createMediaStreamSource(stream);
-	    // __log('Media stream created.');
-	    // // Uncomment if you want the audio to feedback directly
-	    // input.connect(audioCtx.destination);
-			recorder = new Recorder(oscillator);
-	    // __log('Recorder initialised.');
-		}
 
 		function record(button) {
 			if (isRecording) {
@@ -248,45 +246,57 @@
 
 		function startRecording(button) {
 			console.log('Recording...')
-			recorder && recorder.record();
 			isRecording = true;
-			// __log('Recording...');
+			mediaRecorder.start();
 		}
 
 		function stopRecording(button) {
 			console.log('Stop')
-			recorder && recorder.stop();
+			mediaRecorder.stop();
 			isRecording = false;
-			// __log('Stopped recording.');
-			//
-			// // create WAV download link using audio data blob
-			createDownloadLink();
 
-			recorder.clear();
+			// // create WAV download link using audio data blob
+			// createDownloadLink();
+
 		}
 
+		mediaRecorder.ondataavailable = function(evt) {
+       // push each chunk (blobs) in an array
+       chunks.push(evt.data);
+     };
 
-  function createDownloadLink() {
+     mediaRecorder.onstop = function(evt) {
+       // Make blob out of our blobs, and open it.
+       var blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      //  window.location.href = URL.createObjectURL(blob);
+			 createDownloadLink(blob);
+     };
+
+
+  function createDownloadLink(blob) {
 		console.log('Creating link')
 		stop();
-		alert('Esta opción todavía no funciona.');
-    recorder && recorder.exportWAV(function(blob) {
-			console.log('blob')
-      var url = URL.createObjectURL(blob);
-      // var li = document.createElement('li');
-      // var au = document.createElement('audio');
-      // var hf = document.createElement('a');
-			//
-      // au.controls = true;
-      // au.src = url;
-      // hf.href = url;
-      // hf.download = new Date().toISOString() + '.wav';
-      // hf.innerHTML = hf.download;
-      // li.appendChild(au);
-      // li.appendChild(hf);
-      // recordingslist.appendChild(li);
-			alert(url);
-    });
+    var url = URL.createObjectURL(blob);
+		if (confirm('Esta opción todavía no funciona correctamente. Desea intentar la descarga de música igualmente?')) {
+			// window.location.href = URL.createObjectURL(blob);
+			window.open(url, '_blank');
+		} else {
+
+		}
+    // var li = document.createElement('li');
+    // var au = document.createElement('audio');
+    // var hf = document.createElement('a');
+		//
+    // au.controls = true;
+    // au.src = url;
+    // hf.href = url;
+    // hf.download = new Date().toISOString() + '.wav';
+    // hf.innerHTML = hf.download;
+    // li.appendChild(au);
+    // li.appendChild(hf);
+    // recordingslist.appendChild(li);
+
+
   }
 	</script>
 
