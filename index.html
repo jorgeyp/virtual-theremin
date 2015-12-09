@@ -8,6 +8,7 @@
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="bower_components/tracking/build/tracking-min.js"></script>
 	<script src="js/MIDIUtils.js"></script>
+	<script src="js/recorder.js"></script>
 	<link rel="stylesheet" type="text/css" href="bower_components/normalize-css/normalize.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
@@ -63,7 +64,7 @@
 			</div>
 			<div class="row record-container">
 				<div class="col-lg-2 col-md-2 col-xs-3">
-					<input type="submit" id="record" class="btn btn-sound pull-left btn-record" data-sound="record" value="" onclick="record();" />
+					<input type="submit" id="record" class="btn btn-sound pull-left btn-record" data-sound="record" value="" onclick="record(this);" />
 				</div>
 			</div>
 			<div class="row">
@@ -77,6 +78,8 @@
 		</div>
 		<footer id="footer">
 			<p>© Amaia Eskisabel, Jorge Yague </p>
+			<!-- <h2>Recordings</h2>
+  		<ul id="recordingslist"></ul> -->
 		</footer>
 	</div>
 	<!-- <button id="play-sound" onclick="start();">Play sound</button>
@@ -111,6 +114,8 @@
 			var context = canvas.getContext('2d');
 			var isTouching = false;
 			var touchTimeout;
+
+			initialiseRecorder();
 
 			var tracker = new tracking.ColorTracker(['cyan', 'yellow']);
 
@@ -172,14 +177,14 @@
 					if (realX > canvasXo && realX < canvasXe && realY > canvasYo && realY < canvasYe) {
 						$('#' + button).css('background', 'red');
 						if (!isTouching) {
-							console.log('touching')
+							// console.log('touching')
 							isTouching = true;
 							// touchTimeout = setTimeout(function() {
 								setSound(button);
 							// }, 2000);
 						}
 					} else {
-						console.log('not touching')
+						// console.log('not touching')
 						isTouching = false;
 						// clearTimeout(touchTimeout);
 						$('#' + button).css('background', '#2e8ece');
@@ -220,6 +225,69 @@
 			oscillator.type = waveForm;
 			console.log('set sound' + waveForm);
 		}
+
+		// Recorder
+		var isRecording = false;
+
+		function initialiseRecorder() {
+			// var input = audioCtx.createMediaStreamSource(stream);
+	    // __log('Media stream created.');
+	    // // Uncomment if you want the audio to feedback directly
+	    // input.connect(audioCtx.destination);
+			recorder = new Recorder(oscillator);
+	    // __log('Recorder initialised.');
+		}
+
+		function record(button) {
+			if (isRecording) {
+				stopRecording(button);
+			} else {
+				startRecording(button);
+			}
+		}
+
+		function startRecording(button) {
+			console.log('Recording...')
+			recorder && recorder.record();
+			isRecording = true;
+			// __log('Recording...');
+		}
+
+		function stopRecording(button) {
+			console.log('Stop')
+			recorder && recorder.stop();
+			isRecording = false;
+			// __log('Stopped recording.');
+			//
+			// // create WAV download link using audio data blob
+			createDownloadLink();
+
+			recorder.clear();
+		}
+
+
+  function createDownloadLink() {
+		console.log('Creating link')
+		stop();
+		alert('Esta opción todavía no funciona.');
+    recorder && recorder.exportWAV(function(blob) {
+			console.log('blob')
+      var url = URL.createObjectURL(blob);
+      // var li = document.createElement('li');
+      // var au = document.createElement('audio');
+      // var hf = document.createElement('a');
+			//
+      // au.controls = true;
+      // au.src = url;
+      // hf.href = url;
+      // hf.download = new Date().toISOString() + '.wav';
+      // hf.innerHTML = hf.download;
+      // li.appendChild(au);
+      // li.appendChild(hf);
+      // recordingslist.appendChild(li);
+			alert(url);
+    });
+  }
 	</script>
 
 </body>
